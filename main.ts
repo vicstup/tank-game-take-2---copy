@@ -1,5 +1,4 @@
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    statusbar.y += -10
     mySprite.y += -10
     animation.runImageAnimation(
     mySprite,
@@ -79,6 +78,9 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `, mySprite2, -100, 0)
+    if (projectile.overlapsWith(mySprite)) {
+        statusbar.value += -2
+    }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     myDart = sprites.createProjectileFromSprite(img`
@@ -101,7 +103,6 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         `, mySprite, 100, 0)
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    other_bar.y += 10
     mySprite2.y += 10
     animation.runImageAnimation(
     mySprite2,
@@ -163,7 +164,6 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     )
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    other_bar.y += -10
     mySprite2.y += -10
     animation.runImageAnimation(
     mySprite2,
@@ -225,7 +225,6 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     )
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    statusbar.y += 10
     mySprite.y += 10
     animation.runImageAnimation(
     mySprite,
@@ -288,7 +287,6 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 let myDart: Sprite = null
 let projectile: Sprite = null
-let other_bar: StatusBarSprite = null
 let statusbar: StatusBarSprite = null
 let mySprite2: Sprite = null
 let mySprite: Sprite = null
@@ -469,15 +467,15 @@ mySprite2 = sprites.create(img`
     .........................
     `, SpriteKind.Player)
 statusbar = statusbars.create(18, 3, StatusBarKind.Health)
-other_bar = statusbars.create(18, 3, StatusBarKind.Health)
+let other_bar = statusbars.create(18, 3, StatusBarKind.Health)
+statusbar.value += 100
+other_bar.value += 100
 mySprite.setPosition(10, 50)
 statusbar.setPosition(10, 38)
 mySprite2.setPosition(150, 50)
 other_bar.setPosition(150, 38)
+statusbar.attachToSprite(mySprite)
 mySprite.setStayInScreen(true)
 other_bar.setStayInScreen(true)
 mySprite2.setStayInScreen(true)
 statusbar.setStayInScreen(true)
-if (projectile.overlapsWith(mySprite)) {
-    statusbar.value += -2
-}
