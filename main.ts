@@ -1,3 +1,8 @@
+namespace SpriteKind {
+    export const poo = SpriteKind.create()
+    export const poop = SpriteKind.create()
+    export const Green_projectile = SpriteKind.create()
+}
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     mySprite.y += -10
     animation.runImageAnimation(
@@ -60,7 +65,7 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     )
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    projectile = sprites.createProjectileFromSprite(img`
+    poop = sprites.createProjectileFromSprite(img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -78,12 +83,9 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `, mySprite2, -100, 0)
-    if (projectile.overlapsWith(mySprite)) {
-        statusbar.value += -2
-    }
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    myDart = sprites.createProjectileFromSprite(img`
+    projectile = sprites.createProjectileFromSprite(img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -101,6 +103,14 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         `, mySprite, 100, 0)
+})
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Player, function (sprite, otherSprite) {
+    if (poop.overlapsWith(mySprite)) {
+        statusbars.getStatusBarAttachedTo(StatusBarKind.Health, mySprite).value += -2.3
+    }
+    if (projectile.overlapsWith(mySprite2)) {
+        statusbars.getStatusBarAttachedTo(StatusBarKind.EnemyHealth, mySprite2).value += -2.3
+    }
 })
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     mySprite2.y += 10
@@ -162,6 +172,14 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     200,
     false
     )
+})
+statusbars.onZero(StatusBarKind.EnemyHealth, function (status) {
+    game.splash("\"GREEN WIN!\"")
+    game.reset()
+})
+statusbars.onZero(StatusBarKind.Health, function (status) {
+    game.splash("\"RED WIN!\"")
+    game.reset()
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     mySprite2.y += -10
@@ -285,10 +303,9 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     false
     )
 })
-let myDart: Sprite = null
 let projectile: Sprite = null
-let statusbar: StatusBarSprite = null
 let mySprite2: Sprite = null
+let poop: Sprite = null
 let mySprite: Sprite = null
 scene.setBackgroundImage(img`
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -439,6 +456,24 @@ mySprite = sprites.create(img`
     .........................
     .........................
     `, SpriteKind.Player)
+poop = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . 2 2 2 . 2 . . . . 
+    . . . . . . 2 f 5 2 2 . . . . . 
+    . . . . . . 2 5 f 2 2 . . . . . 
+    . . . . . . . 2 2 2 . 2 . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Projectile)
 mySprite2 = sprites.create(img`
     .........................
     .........................
@@ -466,15 +501,36 @@ mySprite2 = sprites.create(img`
     .........................
     .........................
     `, SpriteKind.Player)
-statusbar = statusbars.create(18, 3, StatusBarKind.Health)
-let other_bar = statusbars.create(18, 3, StatusBarKind.Health)
-statusbar.value += 100
-other_bar.value += 100
-mySprite.setPosition(10, 50)
+projectile = sprites.create(img`
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . 7 . 7 7 7 . . . . . . . 
+    . . . . . 7 7 5 f 7 . . . . . . 
+    . . . . . 7 7 f 5 7 . . . . . . 
+    . . . . 7 . 7 7 7 . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    . . . . . . . . . . . . . . . . 
+    `, SpriteKind.Projectile)
+let statusbar = statusbars.create(18, 3, StatusBarKind.Health)
+let other_bar = statusbars.create(18, 3, StatusBarKind.EnemyHealth)
+statusbar.value += 150
+other_bar.value += 150
+poop.setPosition(0, 0)
+projectile.setPosition(0, 0)
 statusbar.setPosition(10, 38)
 mySprite2.setPosition(150, 50)
+mySprite.setPosition(0, 50)
 other_bar.setPosition(150, 38)
 statusbar.attachToSprite(mySprite)
+other_bar.attachToSprite(mySprite2)
 mySprite.setStayInScreen(true)
 other_bar.setStayInScreen(true)
 mySprite2.setStayInScreen(true)
